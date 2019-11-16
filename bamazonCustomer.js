@@ -29,6 +29,29 @@ var connection = mysql.createConnection({
   var itemPrice;    
   var newQuantity; 
 
+
+  function startAgainOrExit () {
+
+    inquirer
+    .prompt({
+      name: "startOrExit",
+      type: "list",
+      message: "Would you like to buy another product?",
+      choices: ["BUY AGAIN", "EXIT"]
+    })
+    .then(function(answer) {
+      // based on their answer, either call the bid or the post functions
+      if (answer.startOrExit === "BUY AGAIN") {
+        start();
+      }
+      else{
+        connection.end();
+      }
+    });
+
+
+  }
+
   function start() {
     
     connection.query("SELECT * FROM products", function(err, res) {
@@ -89,9 +112,7 @@ var connection = mysql.createConnection({
                 setTimeout(function() {questions();  }, 3000);  
             } else {
 
-                newQuantity = result[0].stock_quantity - answer.desired_units;
-
-                console.log("New quantity is: " + newQuantity); 
+                newQuantity = result[0].stock_quantity - answer.desired_units; 
 
                 totalPrice(); 
                 // updateStock(); 
@@ -106,6 +127,7 @@ var connection = mysql.createConnection({
 }); // connection.query end 
 
 } // function start end 
+
 
 function totalPrice() {
  
@@ -144,6 +166,6 @@ function updateStock() {
         }
       ); 
 
-      setTimeout(function() {start();  }, 3000); 
+      setTimeout(function() {startAgainOrExit();  }, 500); 
 
 }; 
