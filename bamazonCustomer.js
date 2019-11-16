@@ -24,8 +24,10 @@ var connection = mysql.createConnection({
     start(); 
   });
 
+  // Global variables 
   var purchaseQuantity; 
   var itemPrice;    
+  var newQuantity; 
 
   function start() {
     
@@ -82,9 +84,15 @@ var connection = mysql.createConnection({
 
             purchaseQuantity = parseInt(answer.desired_units); 
 
-            if (answer.desired_units > result) {
-                console.log("Sorry, we only have " + result + " in stock left! Enter a smaller quantity"); 
+            if (answer.desired_units > result[0].stock_quantity) {
+                console.log("Sorry, we only have " + result[0].stock_quantity + " in stock left! Enter a smaller quantity or choose another product."); 
+                setTimeout(function() {questions();  }, 3000);  
             } else {
+
+                newQuantity = result[0].stock_quantity - answer.desired_units;
+
+                console.log("New quantity is: " + newQuantity); 
+
                 totalPrice(); 
                 // updateStock(); 
             }
@@ -107,29 +115,35 @@ function totalPrice() {
           item_id: itemID,
         },
         function(err, result) {
-
-          console.log("purchase quantity typeof " + typeof purchaseQuantity); 
-
-          var price = parseInt(result); 
-
-          console.log(purchaseQuantity * result); 
-
-          console.log("Price typeof " + typeof price);
-
-          var quantityInt = parseInt(purchaseQuantity); 
-
-          console.log("Quantity typeof " + quantityInt); 
     
           if (err) throw err;
 
-          console.log("total cost is: " + (price * purchaseQuantity)); 
+          console.log("Your total is: $" + result[0].price * purchaseQuantity); 
+
+          updateStock(); 
 
         }
       ); 
 
 }; 
 
-// function updateStock() {
+function updateStock() {
 
+    connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [{
+          stock_quantity: newQuantity
+        },
+        {
+          item_id: itemID
+        }],
+        function(err) {
+    
+          if (err) throw err;
 
-// }; 
+        }
+      ); 
+
+      setTimeout(function() {start();  }, 3000); 
+
+}; 
