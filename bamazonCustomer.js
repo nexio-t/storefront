@@ -29,21 +29,32 @@ var connection = mysql.createConnection({
     
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
+
         console.table(res);
-      });
     
        setTimeout(function() {questions();  }, 500);  
-  }
-
-  function questions() {
+  
+  function questions() { // function start 
     inquirer
     .prompt({
-      name: "postOrBid",
-      type: "list",
-      message: "Would you like to [POST] an auction or [BID] on an auction?",
-      choices: ["POST", "BID", "EXIT"]
+      name: "product_id",
+      type: "rawlist",
+      message: "What is the ID of the product you'd like to purchase?",
+      choices: function displayProductIDs() {
+
+          var productList = []; 
+
+          for (var i = 0; i < res.length; i++) {
+              productList.push(res[i].item_id); 
+          }
+          return productList; 
+      }, 
+      {
+
+      }
+
     })
-    .then(function(answer) {
+    .then(function(answer) { 
       // based on their answer, either call the bid or the post functions
       if (answer.postOrBid === "POST") {
         postAuction();
@@ -53,5 +64,9 @@ var connection = mysql.createConnection({
       } else{
         connection.end();
       }
-    });
-  }
+    }); // inquirer then end 
+  } // function end 
+
+}); // connection.query end 
+
+} // function start end 
