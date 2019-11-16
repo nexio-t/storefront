@@ -24,6 +24,8 @@ var connection = mysql.createConnection({
     start(); 
   });
 
+  var purchaseQuantity; 
+  var itemPrice;    
 
   function start() {
     
@@ -36,7 +38,8 @@ var connection = mysql.createConnection({
   
   function questions() { // function start 
     inquirer
-    .prompt({
+    .prompt([
+      {
       name: "product_id",
       type: "rawlist",
       message: "What is the ID of the product you'd like to purchase?",
@@ -48,25 +51,85 @@ var connection = mysql.createConnection({
               productList.push(res[i].item_id); 
           }
           return productList; 
-      }, 
+            }
+        }, 
       {
-
+        name: "desired_units",
+        type: "input",
+        message: "How many units of the product would you like to purchase? ",
+        validate: function(value) {
+            if (isNaN(value) === false) {
+                return true;
+            }
+            return false + console.log(" Please enter a number!"); 
+        }
       }
-
-    })
+    ])
     .then(function(answer) { 
-      // based on their answer, either call the bid or the post functions
-      if (answer.postOrBid === "POST") {
-        postAuction();
-      }
-      else if(answer.postOrBid === "BID") {
-        bidAuction();
-      } else{
-        connection.end();
-      }
+ 
+      // pull item id for that product in mysql
+      
+      itemID = answer.product_id; 
+      
+      connection.query(
+        "SELECT stock_quantity FROM products WHERE ?",
+        {
+          item_id: answer.product_id,
+        },
+        function(err, result) {
+
+          if (err) throw err;
+
+            purchaseQuantity = parseInt(answer.desired_units); 
+
+            if (answer.desired_units > result) {
+                console.log("Sorry, we only have " + result + " in stock left! Enter a smaller quantity"); 
+            } else {
+                totalPrice(); 
+                // updateStock(); 
+            }
+         
+        }
+      ); // connection.query end
+
     }); // inquirer then end 
   } // function end 
 
 }); // connection.query end 
 
 } // function start end 
+
+function totalPrice() {
+ 
+    connection.query(
+        "SELECT price FROM products WHERE ?",
+        {
+          item_id: itemID,
+        },
+        function(err, result) {
+
+          console.log("purchase quantity typeof " + typeof purchaseQuantity); 
+
+          var price = parseInt(result); 
+
+          console.log(purchaseQuantity * result); 
+
+          console.log("Price typeof " + typeof price);
+
+          var quantityInt = parseInt(purchaseQuantity); 
+
+          console.log("Quantity typeof " + quantityInt); 
+    
+          if (err) throw err;
+
+          console.log("total cost is: " + (price * purchaseQuantity)); 
+
+        }
+      ); 
+
+}; 
+
+// function updateStock() {
+
+
+// }; 
