@@ -27,8 +27,6 @@ var connection = mysql.createConnection({
   // Global variables 
   var purchaseQuantity; 
 
-  var itemPrice;    
-  
   var newQuantity; 
 
 
@@ -56,7 +54,7 @@ var connection = mysql.createConnection({
 
   function start() {
     
-    connection.query("SELECT * FROM products", function(err, res) {
+    connection.query("SELECT item_id, product_name, price FROM products", function(err, res) {
         if (err) throw err;
 
         console.table(res);
