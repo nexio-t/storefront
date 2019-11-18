@@ -26,7 +26,9 @@ var connection = mysql.createConnection({
 
   // Global variables 
   var purchaseQuantity; 
+
   var itemPrice;    
+  
   var newQuantity; 
 
 
