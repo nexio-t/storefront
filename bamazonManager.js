@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require('cli-table3');
 require("dotenv").config(); 
 
 // create the connection information for the sql database
@@ -44,17 +45,14 @@ var connection = mysql.createConnection({
     })
     .then(function(answer) {
       
-      
       switch(answer.managerOptions) {
 
           case "View products for sale":
-            console.log("this works");  
-            // viewProducts();
+            viewProducts();
             break; 
 
           case "View low inventory":
-            console.log("this works"); 
-            // lowInventory(); 
+            lowInventory(); 
             break; 
 
           case "Add to inventory":
@@ -74,3 +72,76 @@ var connection = mysql.createConnection({
       }; // switch end 
     }); // then end 
   } // start() end 
+
+function viewProducts() {
+
+    connection.query(
+        "SELECT * FROM products",
+        
+        function(err, result) {
+    
+          if (err) throw err;
+
+          var displayTable = new Table({
+            head: ["ID", "Product", "Department", "Price", "Stock"], 
+            colWidths: [5, 40, 22, 22, 22]
+          });
+
+          for (var i = 0; i < result.length; i++) {
+
+              displayTable.push([result[i].item_id, result[i].product_name, result[i].department_name, result[i].price, result[i].stock_quantity]); 
+
+          }
+          console.log(displayTable.toString()); 
+
+          setTimeout(function() {start();  }, 1000);  
+
+        }
+      ); 
+
+}; 
+
+function lowInventory() {
+
+    connection.query(
+        "SELECT * FROM products WHERE stock_quantity < 5", 
+      
+        function(err, result) {
+    
+          if (err) throw err;
+
+          var displayTable = new Table({
+            head: ["ID", "Product", "Department", "Price", "Stock"], 
+            colWidths: [5, 40, 22, 22, 22]
+          });
+
+          for (var i = 0; i < result.length; i++) {
+
+              displayTable.push([result[i].item_id, result[i].product_name, result[i].department_name, result[i].price, result[i].stock_quantity]); 
+
+          }
+          console.log(displayTable.toString()); 
+
+          setTimeout(function() {start();  }, 1000);  
+
+        }
+      ); 
+
+}
+
+function addInventory() {
+
+    connection.query(
+        "SELECT * FROM products WHERE stock_quantity < 5", 
+      
+        function(err, result) {
+          console.log(result); 
+          if (err) throw err;
+
+        }
+
+
+      ); 
+
+}
+
