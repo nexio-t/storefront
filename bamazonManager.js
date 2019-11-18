@@ -62,7 +62,7 @@ var connection = mysql.createConnection({
 
           case "Add new product":
             console.log("this works"); 
-            // newProduct(); 
+            newProduct(); 
             break;
           case "Exit": 
             console.log("this works"); 
@@ -129,19 +129,62 @@ function lowInventory() {
 
 }
 
+
 function addInventory() {
-
-    connection.query(
-        "SELECT * FROM products WHERE stock_quantity < 5", 
-      
-        function(err, result) {
-          console.log(result); 
-          if (err) throw err;
-
-        }
-
-
-      ); 
-
+    console.log("this works!"); 
 }
+
+function newProduct() {
+
+    inquirer
+    .prompt(
+    [{
+      name: "productName",
+      type: "input",
+      message: "What is the product name?"
+    },
+    {
+        name: "productDept",
+        type: "input",
+        message: "What is the relevant department for this product?"
+    },
+    {
+        name: "productPrice",
+        type: "input",
+        message: "What is the price of this product ($)?"
+    }, 
+    {
+        name: "productStock",
+        type: "input",
+        message: "What is this item's inventory?"
+    }
+    ]).then(function(answer) {
+
+        
+
+        var product = answer.productName;
+        var department = answer.productDept; 
+        var price = answer.productPrice; 
+        var stock = answer.productStock; 
+
+        connection.query(
+            "INSERT INTO products SET ?",
+            [{
+              product_name: product,
+              department_name: department,
+              price: price,
+              stock_quantity: stock
+            }],
+            function(err) {
+        
+              if (err) throw err;
+    
+            }
+
+        // console.log("Product added!")
+        // setTimeout(function() {start();  }, 1000);  
+
+          ); // connection query end 
+    }); // then end 
+}; // new product function end 
 
