@@ -17,8 +17,60 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
   });
 
+// Connection ID  
   connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id: " + connection.threadId); 
     start(); 
   });
+
+
+/********TO DO: 
+ 
+    (1) Add connection.end() somewhere 
+
+ *************/
+
+// Start Function 
+
+  function start() {
+
+    inquirer
+    .prompt({
+      name: "managerOptions",
+      type: "list",
+      message: "What would you like to do?",
+      choices: ["View products for sale", "View low inventory", "Add to inventory", "Add new product", "Exit"]
+    })
+    .then(function(answer) {
+      
+      
+      switch(answer.managerOptions) {
+
+          case "View products for sale":
+            console.log("this works");  
+            // viewProducts();
+            break; 
+
+          case "View low inventory":
+            console.log("this works"); 
+            // lowInventory(); 
+            break; 
+
+          case "Add to inventory":
+            console.log("this works"); 
+            // addInventory(); 
+            break; 
+
+          case "Add new product":
+            console.log("this works"); 
+            // newProduct(); 
+            break;
+          case "Exit": 
+            console.log("this works"); 
+            connection.end();
+            break; 
+
+      }; // switch end 
+    }); // then end 
+  } // start() end 
