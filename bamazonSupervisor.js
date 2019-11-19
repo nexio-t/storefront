@@ -59,8 +59,41 @@ var connection = mysql.createConnection({
   } // start function end
 
   function viewProductsByDept() {
-    // do this 
+
+    // do an inner join 
+    // then during push, just subtract diff. from product and sales
+
+    // "SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales FROM departments JOIN products ON department.department_id = products.department_name"
+
+    connection.query(
+        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id",
+        
+        function(err, result) {
     
+          if (err) throw err;
+          console.table(result); 
+
+        //   var displayTable = new Table({
+        //     head: ["ID", "Product", "Department", "Price", "Stock"], 
+        //     colWidths: [6, 30, 40, 30, 30]
+        //   });
+
+        //   for (var i = 0; i < result.length; i++) {
+
+        //       displayTable.push([result[i].item_id, result[i].product_name, result[i].department_name, result[i].price, result[i].stock_quantity]); 
+
+        //   }
+        //   console.log(displayTable.toString()); 
+
+        //   setTimeout(function() {start();  }, 1000);  
+
+        }
+      ); 
+
+
+
+
+
 
 
   };
