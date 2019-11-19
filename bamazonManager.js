@@ -205,19 +205,19 @@ function addInventory() {
                   if (err) throw err;
     
                   console.log(res.affectedRows + " product's stock successfully updated!\n");
+                  setTimeout(function() {start();  }, 1000); 
                
                 }
               );
            
             }
           );
-        
 
       });
 
     });
 
-}
+};
 
 function newProduct() {
 

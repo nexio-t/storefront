@@ -8,6 +8,7 @@ CREATE TABLE products(
   department_name VARCHAR(30) NOT NULL, 
   price DECIMAL(10,2) NOT NULL, 
   stock_quantity INTEGER NOT NULL, 
+  product_sales INTEGER, 
   PRIMARY KEY (item_id)
 );
 
@@ -22,3 +23,12 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) valu
 INSERT INTO products (product_name, department_name, price, stock_quantity) values ("Kleenex Ultra Soft Tissues", "Beauty and Personal Care", 4.99, 60);
 INSERT INTO products (product_name, department_name, price, stock_quantity) values ("Nonstick 13-inch Skillet", "Kitchen", 28.99, 25);
 INSERT INTO products (product_name, department_name, price, stock_quantity) values ("Wooden Spoon", "Kitchen", 2.99, 20);
+
+
+CREATE TABLE departments(
+  department_id INTEGER(11) AUTO_INCREMENT NOT NULL,
+  department_name VARCHAR(50) NOT NULL,
+  over_head_costs INTEGER NOT NULL, 
+  PRIMARY KEY (department_id)
+);
+

@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require('cli-table3');
 require("dotenv").config(); 
 
 
@@ -29,6 +30,8 @@ var connection = mysql.createConnection({
 
   var newQuantity; 
 
+  var grandTotal; 
+
 
   function startAgainOrExit () {
 
@@ -57,7 +60,19 @@ var connection = mysql.createConnection({
     connection.query("SELECT item_id, product_name, price FROM products", function(err, res) {
         if (err) throw err;
 
-        console.table(res);
+        var displayTable = new Table({
+            head: ["ID", "Product", "Price"], 
+            colWidths: [6, 30, 40]
+          });
+
+        for (var i = 0; i < res.length; i++) {
+
+            displayTable.push([res[i].item_id, res[i].product_name, res[i].price]); 
+
+        }
+        console.log(displayTable.toString());
+
+
     
        setTimeout(function() {questions();  }, 500);  
   
@@ -108,7 +123,7 @@ var connection = mysql.createConnection({
             purchaseQuantity = parseInt(answer.desired_units); 
 
             if (answer.desired_units > result[0].stock_quantity) {
-                console.log("Sorry, we only have " + result[0].stock_quantity + " in stock left! Enter a smaller quantity or choose another product."); 
+                console.log("Sorry, we only have " + result[0].stock_quantity + " in stock! Enter a smaller quantity or choose another product."); 
                 setTimeout(function() {questions();  }, 3000);  
             } else {
 
@@ -140,6 +155,8 @@ function totalPrice() {
     
           if (err) throw err;
 
+          grandTotal = result[0].price * purchaseQuantity; 
+
           console.log("Your total is: $" + result[0].price * purchaseQuantity); 
 
           updateStock(); 
@@ -154,7 +171,8 @@ function updateStock() {
     connection.query(
         "UPDATE products SET ? WHERE ?",
         [{
-          stock_quantity: newQuantity
+          stock_quantity: newQuantity,
+          product_sales: grandTotal
         },
         {
           item_id: itemID
