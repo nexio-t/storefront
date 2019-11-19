@@ -39,6 +39,14 @@ INSERT INTO departments (department_name, over_head_costs) values ("Electronics"
 
 INSERT INTO departments (department_name, over_head_costs) values ("Household Supplies", 4000);
 
-INSERT INTO departments (department_name, over_head_costs) values ("Kitchen", 3000);
+INSERT INTO departments (department_name, over_head_costs) values ("Kitchen", 5000);
 
+
+-- USE bamazon_db;
+
+-- SELECT departments.department_name, departments.department_id, departments.over_head_costs, SUM(products.product_sales)
+-- FROM departments 
+-- LEFT JOIN products
+-- ON departments.department_name = products.department_name
+-- GROUP BY departments.department_id
 
