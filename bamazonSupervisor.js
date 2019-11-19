@@ -66,24 +66,29 @@ var connection = mysql.createConnection({
     // "SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales FROM departments JOIN products ON department.department_id = products.department_name"
 
     connection.query(
-        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id",
+        "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS sales FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_id",
         
         function(err, result) {
     
           if (err) throw err;
+
+
           console.table(result); 
+          console.log(result); 
 
-        //   var displayTable = new Table({
-        //     head: ["ID", "Product", "Department", "Price", "Stock"], 
-        //     colWidths: [6, 30, 40, 30, 30]
-        //   });
+          var displayTable = new Table({
+            head: ["ID", "Department", "Overhead", "Sales", "Total Profit"], 
+            colWidths: [6, 40, 40, 15, 15]
+          });
 
-        //   for (var i = 0; i < result.length; i++) {
+          for (var i = 0; i < result.length; i++) {
 
-        //       displayTable.push([result[i].item_id, result[i].product_name, result[i].department_name, result[i].price, result[i].stock_quantity]); 
+                var profit = result[i].over_head_costs - result[i].sales; 
 
-        //   }
-        //   console.log(displayTable.toString()); 
+              displayTable.push([result[i].department_id, result[i].department_name, result[i].over_head_costs, result[i].sales, profit]); 
+
+          }
+          console.log(displayTable.toString()); 
 
         //   setTimeout(function() {start();  }, 1000);  
 
