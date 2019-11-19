@@ -32,24 +32,21 @@ var connection = mysql.createConnection({
       name: "managerOptions",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View product sales by department", "Create new deparment", "Exit"]
+      choices: ["View product sales by department", "Create new department", "Exit"]
     })
     .then(function(answer) {
       
       switch(answer.managerOptions) {
 
           case "View product sales by department":
-            console.log("this works"); 
             viewProductsByDept();
             break; 
 
           case "Create new department":
-            console.log("this works"); 
-            createNewDept(); 
+            createNewDept()
             break; 
 
           case "Exit": 
-            console.log("this works"); 
             connection.end();
             break; 
 
@@ -72,10 +69,6 @@ var connection = mysql.createConnection({
     
           if (err) throw err;
 
-
-          console.table(result); 
-          console.log(result); 
-
           var displayTable = new Table({
             head: ["ID", "Department", "Overhead", "Sales", "Total Profit"], 
             colWidths: [6, 40, 40, 15, 15]
@@ -83,14 +76,14 @@ var connection = mysql.createConnection({
 
           for (var i = 0; i < result.length; i++) {
 
-                var profit = result[i].over_head_costs - result[i].sales; 
+            var profit = result[i].over_head_costs - result[i].sales; 
 
               displayTable.push([result[i].department_id, result[i].department_name, result[i].over_head_costs, result[i].sales, profit]); 
 
           }
           console.log(displayTable.toString()); 
 
-        //   setTimeout(function() {start();  }, 1000);  
+          setTimeout(function() {start();  }, 1000);  
 
         }
       ); 
@@ -105,5 +98,39 @@ var connection = mysql.createConnection({
 
 
   function createNewDept() {
-    // do this
+
+    inquirer
+    .prompt(
+    [{
+      name: "departmentName",
+      type: "input",
+      message: "What is the new department's name?"
+    },
+    {
+        name: "ohCosts",
+        type: "input",
+        message: "What are the department's fixed overhead costs?"
+    }]).then(function(answer) {
+
+        console.log("Department successfully added!"); 
+        setTimeout(function() {start();  }, 1000);  
+
+        var department = answer.departmentName;
+        var costs = answer.ohCosts; 
+
+        connection.query(
+            "INSERT INTO departments SET ?",
+            [{
+              department_name: department,
+              over_head_costs: costs
+            }],
+            function(err) {
+        
+              if (err) throw err;
+    
+            }
+
+          ); // connection query end 
+    }); // then end 
+
   };
