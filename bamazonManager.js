@@ -141,7 +141,7 @@ function addInventory() {
 
         var displayTable = new Table({
             head: ["ID", "Product", "Stock"], 
-            colWidths: [6, 30, 40, 30, 30]
+            colWidths: [6, 30, 40]
           });
 
         for (var i = 0; i < result.length; i++) {
@@ -153,7 +153,7 @@ function addInventory() {
 
     inquirer
     .prompt(
-    {
+    [{
       name: "productID",
       type: "rawlist",
       message: "To which product would you like to add inventory?", 
@@ -167,12 +167,51 @@ function addInventory() {
           return productList; 
     
       } // function end 
-    })
-    .then(function(answer) {
-        // based on their answer, either call the bid or the post functions
+    }, 
+    {
+      name: "stockIncrease",
+      type: "input",
+      message: "How many items would you like to add to the inventory?"
+    }]
+    ).then(function(answer) {
+
+        var prodID = answer.productID; 
+
+        var increase = parseInt(answer.stockIncrease); 
+
+        var newStock = 0; 
+
+        connection.query(
+            "SELECT stock_quantity FROM products WHERE ?",
+            {
+                item_id: prodID
+            },
+            function(err, result) {
+
+                if (err) throw err;
+            
+                newStock = increase + result[0].stock_quantity;
+
+            connection.query(
+                "UPDATE products SET ? WHERE ?",
+                [{
+                    stock_quantity: newStock
+                },  
+                {
+                    item_id: prodID
+                  }],
+                function(err, res) {
+    
+                  if (err) throw err;
+    
+                  console.log(res.affectedRows + " product's stock successfully updated!\n");
+               
+                }
+              );
+           
+            }
+          );
         
-        
-        console.log(asnwer.productID); 
 
       });
 
