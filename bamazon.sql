@@ -32,3 +32,13 @@ CREATE TABLE departments(
   PRIMARY KEY (department_id)
 );
 
+
+INSERT INTO departments (department_name, over_head_costs) values ("Beauty and Personal Care", 5000);
+
+INSERT INTO departments (department_name, over_head_costs) values ("Electronics", 10000);
+
+INSERT INTO departments (department_name, over_head_costs) values ("Household Supplies", 4000);
+
+INSERT INTO departments (department_name, over_head_costs) values ("Kitchen", 3000);
+
+
