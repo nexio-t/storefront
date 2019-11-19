@@ -57,7 +57,7 @@ var connection = mysql.createConnection({
 
           case "Add to inventory":
             console.log("this works"); 
-            // addInventory(); 
+            addInventory(); 
             break; 
 
           case "Add new product":
@@ -84,7 +84,7 @@ function viewProducts() {
 
           var displayTable = new Table({
             head: ["ID", "Product", "Department", "Price", "Stock"], 
-            colWidths: [5, 40, 22, 22, 22]
+            colWidths: [6, 30, 40, 30, 30]
           });
 
           for (var i = 0; i < result.length; i++) {
@@ -132,6 +132,52 @@ function lowInventory() {
 
 function addInventory() {
     console.log("this works!"); 
+
+    connection.query("SELECT item_id, product_name, stock_quantity FROM products", function(err, result) {
+    
+        if (err) throw err;
+
+        console.table(result);
+
+        var displayTable = new Table({
+            head: ["ID", "Product", "Stock"], 
+            colWidths: [6, 30, 40, 30, 30]
+          });
+
+        for (var i = 0; i < result.length; i++) {
+
+            displayTable.push([result[i].item_id, result[i].product_name, result[i].stock_quantity]); 
+
+        }
+        console.log(displayTable.toString());
+
+    inquirer
+    .prompt(
+    {
+      name: "productID",
+      type: "rawlist",
+      message: "To which product would you like to add inventory?", 
+      choices: function displayProducts() {
+
+        var productList = []; 
+
+          for (var i = 0; i < result.length; i++) {
+              productList.push(result[i].item_id); 
+          }
+          return productList; 
+    
+      } // function end 
+    })
+    .then(function(answer) {
+        // based on their answer, either call the bid or the post functions
+        
+        
+        console.log(asnwer.productID); 
+
+      });
+
+    });
+
 }
 
 function newProduct() {
@@ -160,7 +206,8 @@ function newProduct() {
     }
     ]).then(function(answer) {
 
-        
+        console.log("Product successfully added!"); 
+        setTimeout(function() {start();  }, 1000);  
 
         var product = answer.productName;
         var department = answer.productDept; 
@@ -180,9 +227,6 @@ function newProduct() {
               if (err) throw err;
     
             }
-
-        // console.log("Product added!")
-        // setTimeout(function() {start();  }, 1000);  
 
           ); // connection query end 
     }); // then end 
